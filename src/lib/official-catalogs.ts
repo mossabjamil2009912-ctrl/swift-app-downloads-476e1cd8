@@ -26,7 +26,7 @@ export function officialCatalogUrl(product: Product, lang: "en" | "ar"): string 
   if (lang === "en") return src;
 
   // 1) معرّف المنتج/الموديل نفسه  2) معرّف السلسلة  3) أول موديل من نفس السلسلة  4) اسم الملف القديم
-  const base = product.baseId ?? product.id.split("--")[0];
+  const base: string = product.baseId ?? product.id.split("--")[0] ?? product.id;
   for (const name of [product.id, base]) if (AR_SET.has(name)) return arUrl(name);
   const sibling = AR_FILES.find((n) => n.startsWith(`${base}--`));
   if (sibling) return arUrl(sibling);
