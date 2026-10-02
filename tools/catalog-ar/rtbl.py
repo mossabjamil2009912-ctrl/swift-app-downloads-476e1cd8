@@ -30,7 +30,13 @@ def flip(src, dst, pno, y0, y1, lab, val, extra=(), thr=200, colgap=6.0, doc=Non
     fills, copies = [], []
     for a, b in _runs(ink.any(1), 1):
         ya, yb = y0 + a / Z - 0.3, y0 + b / Z + 0.3
-        bg = tuple(float(c) / 255 for c in rgb[max(a - 1, 0), int((vx0 - lx0 + 2) * Z)])
+        blk = rgb[a:b].reshape(-1, 3)
+        blk = blk[blk.mean(1) > 225]
+        if len(blk):
+            vals, cnt = np.unique(blk, axis=0, return_counts=True)
+            bg = tuple(float(c) / 255 for c in vals[cnt.argmax()])
+        else:
+            bg = (1, 1, 1)
         fills.append((pymupdf.Rect(lx0, ya, vx1, yb), bg))
         if ralign:
             li = ink[a:b, :int((lx1 - lx0) * Z)].any(0).nonzero()[0]
