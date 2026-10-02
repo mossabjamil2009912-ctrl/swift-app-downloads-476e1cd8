@@ -10,3 +10,9 @@
 - [x] Home partners strip: real Li-Power logo + each partner links to official site
 - [x] Rebuild Arabic official catalogs with accurate engineering translation and correct RTL
 - [x] Remove model highlighting from all catalogs (user cancelled it)
+
+## Arabic catalogs polish (rebuild from English layout, tools/catalog-ar)
+- [x] Suntech 595W, Suntech 720W, Solis 5-8K (6K + 8K)
+- [ ] Solis 12-20K, 29.9-50K, 75-125K
+- [ ] Deye 3-6K, 7.6-12K, 14-20K, 29.9-50K, 60-80K
+- [ ] Batteries (Pylontech UF5000, Optimus A300, Hithium NeoPower 4) + numbered catalog-*.pdf
