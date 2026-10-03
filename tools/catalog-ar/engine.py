@@ -83,7 +83,7 @@ def put(page, x_right, cy, text, d, w, size, col):
     if d:
         box = pymupdf.Rect(x_right - tw - 1.0, top, x_right + 8, top + size * 2.2)
     html = '<div dir="%s" style="white-space:nowrap;text-align:%s;font-size:%.2fpt;font-weight:%d;color:%s">%s</div>' % (
-        dirn, al, size, w, col, text.replace("&", "&amp;").replace("<", "&lt;"))
+        dirn, al, size, w, col, ("\u200e" if d else "") + text.replace("&", "&amp;").replace("<", "&lt;"))
     rc = page.insert_htmlbox(box, html, css=CSS, archive=ARCH)
     if rc[0] < 0:
         print("NOFIT run", text, file=sys.stderr)
