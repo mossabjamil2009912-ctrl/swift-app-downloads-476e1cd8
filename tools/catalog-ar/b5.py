@@ -9,5 +9,5 @@ jobs = [(f, 36, 764) + D for f in ['deye-sun-14-20k-sg05lp3--16k', 'deye-sun-14-
 jobs.append(('solis-s6-eh3p-75-125k--125k', 72, 770, (43, 190), (190, 553)))
 N = int(sys.argv[1])
 for f, y0, y1, l, v in jobs[N:N + 1]:
-    flip(S + f + '.pdf', '/tmp/cat/' + f + '-r.pdf', 1, y0, y1, l, v, ralign=True)
+    flip(S + f + '.pdf', '/tmp/cat/' + f + '-r.pdf', 1, y0, y1, l, v, ralign=True, center=True)
     pymupdf.open('/tmp/cat/' + f + '-r.pdf')[1].get_pixmap(dpi=80).save('/tmp/cat/' + f + '-r-2.png')
