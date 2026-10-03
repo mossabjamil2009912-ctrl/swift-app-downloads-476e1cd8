@@ -72,7 +72,11 @@ p1.update({
 })
 engine.build(SRC, DST, {0: p0, 1: p1}, {0: [((28, 197, 205, 211), {"ar": "نظام تخزين طاقة منزلي", "l": 28, "w": 600, "size": 20, "color": 0xffffff})]})
 import pymupdf
-d = pymupdf.open(DST); d.subset_fonts(); d.save(DST + '.tmp', garbage=4, deflate=True)
+d = pymupdf.open(DST)
+_s = pymupdf.open(SRC)
+for clip in [(20, 85, 390, 190), (35, 238, 180, 290)]:  # restore title + badge removed by overlapping redactions
+    d[0].show_pdf_page(pymupdf.Rect(clip), _s, 0, clip=pymupdf.Rect(clip))
+d.subset_fonts(); d.save(DST + '.tmp', garbage=4, deflate=True)
 import os; os.replace(DST + '.tmp', DST)
 engine.render(DST, '/tmp/cat/c4n', 70)
 print(os.path.getsize(DST))
