@@ -18,7 +18,7 @@ def _runs(v, gap):
     return out
 
 
-def flip(src, dst, pno, y0, y1, lab, val, extra=(), thr=200, colgap=6.0, doc=None, ralign=False):
+def flip(src, dst, pno, y0, y1, lab, val, extra=(), thr=200, colgap=6.0, doc=None, ralign=False, center=False):
     s = pymupdf.open(src); d = doc or pymupdf.open(src)
     sp = s[pno]; page = d[pno]
     lx0, lx1 = lab; vx0, vx1 = val
