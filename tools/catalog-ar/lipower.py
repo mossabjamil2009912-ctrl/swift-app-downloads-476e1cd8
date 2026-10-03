@@ -81,7 +81,8 @@ def table_page(page):
     reg = pymupdf.Rect(36, 214, W - 36, 766)
     texts = [l for l in engine.lines(page) if reg.contains(l["bbox"].tl + (0.5, 0.5))]
     drs = [d for d in page.get_drawings() if reg.contains(d["rect"])
-           and not pymupdf.Rect(422, 645, 433, 706).contains(d["rect"])]
+           and not pymupdf.Rect(422, 645, 433, 706).contains(d["rect"])
+           and not pymupdf.Rect(433, 650, 444, 690).contains(d["rect"])]  # outlined ℃ glyphs
     page.add_redact_annot(reg, fill=False)
     for l in engine.lines(page):  # page header
         if l["t"] in ("Technical Data", "Lipower Inverters"):
