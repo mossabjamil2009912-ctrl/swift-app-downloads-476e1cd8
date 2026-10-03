@@ -95,7 +95,7 @@ p1 = {
     "monitor battery status in real time.": None,
     "ENERGY EXPANSION": ft("توسعة الطاقة", FL),
     "Up to 8 batteries in parallel connection, building a 12 V 800 Ah battery": fd("حتى 8 بطاريات على التوازي لبناء نظام 12 V بسعة 800 Ah\nوبطاقة قصوى 10.24 kWh", FL, lh=8.5, dy=1.5),
-    "system with a max. energy output of 10.24 kWh": None,
+    "system with a max. energy output of 10.24 kWh.": None,
     "LOW-TEMPERATURE HEATING": ft("تسخين في الحرارة المنخفضة", FR),
     "The heating film allows the battery to work in extreme cold.": fd("غشاء التسخين يتيح للبطارية العمل في البرد الشديد.", FR, dy=1.5),
     "LOW SELF-DISCHARGE LOSS": ft("تفريغ ذاتي منخفض", FL),
