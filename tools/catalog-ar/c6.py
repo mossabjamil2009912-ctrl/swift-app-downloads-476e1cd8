@@ -1,6 +1,7 @@
 """catalog-6: Pylontech PowerCube-M5A-64 (7 pages) — rebuilt RTL from the English original."""
 import sys, os, re; sys.path.insert(0, '/dev-server/tools/catalog-ar')
 import engine, pymupdf
+engine.LTR_DIRECT = True
 
 SRC = '/dev-server/public/catalogs/catalog-6.pdf'
 DST = '/dev-server/public/catalogs/official-ar/catalog-6.pdf'

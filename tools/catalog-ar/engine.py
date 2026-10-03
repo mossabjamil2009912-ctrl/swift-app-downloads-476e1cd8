@@ -6,6 +6,7 @@ import uharfbuzz as hb
 F = "/tmp/cat/f/IBMPlexSansArabic-"
 FILES = {700: F + "Bold.ttf", 600: F + "SemiBold.ttf", 400: F + "Regular.ttf"}
 HBF = {}
+LTR_DIRECT = False
 for w, p in FILES.items():
     blob = hb.Blob.from_file_path(p); face = hb.Face(blob); font = hb.Font(face)
     HBF[w] = (font, face.upem)
@@ -83,7 +84,11 @@ def put(page, x_right, cy, text, d, w, size, col):
     if d:
         box = pymupdf.Rect(x_right - tw - 1.0, top, x_right + 8, top + size * 2.2)
     html = '<div dir="%s" style="white-space:nowrap;text-align:%s;font-size:%.2fpt;font-weight:%d;color:%s">%s</div>' % (
-        dirn, al, size, w, col, ("\u200e" if d else "") + text.replace("&", "&amp;").replace("<", "&lt;"))
+        dirn, al, size, w, col, text.replace("&", "&amp;").replace("<", "&lt;"))
+    if d and LTR_DIRECT:
+        c = tuple(int(col[i:i + 2], 16) / 255 for i in (1, 3, 5))
+        page.insert_text((x_right - tw, cy + size * 0.36), text, fontsize=size, fontname="plx%d" % w, fontfile=FILES[w], color=c)
+        return tw
     rc = page.insert_htmlbox(box, html, css=CSS, archive=ARCH)
     if rc[0] < 0:
         print("NOFIT run", text, file=sys.stderr)
