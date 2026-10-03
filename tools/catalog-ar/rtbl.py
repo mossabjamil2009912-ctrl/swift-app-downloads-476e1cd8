@@ -47,7 +47,7 @@ def flip(src, dst, pno, y0, y1, lab, val, extra=(), thr=200, colgap=6.0, doc=Non
             copies.append((pymupdf.Rect(lx0, ya, lx1, yb), new_l))
         vi0 = int((vx0 - lx0) * Z)
         row = ink[a:b, vi0:].any(0)
-        whole = _runs(row, int(12 * Z))
+        whole = _runs(row, int(25 * Z))
         if center and len(whole) == 1:
             x0 = vx0 + whole[0][0] / Z - 0.6; x1 = vx0 + whole[0][1] / Z + 0.6
             copies.append((pymupdf.Rect(x0, ya, x1, yb), new_v0 + ((vx1 - vx0) - (x1 - x0)) / 2))
