@@ -155,7 +155,7 @@ def feature_page(page, header, feats, title=None):
             else:
                 cur.append(r)
         blocks.append(cur)
-    assert len(blocks) == len(feats), (len(blocks), len(feats))
+    assert len(blocks) == len(feats), [(round(b[0].x0), round(b[0].y0), len(b)) for b in blocks]
     for b, txt in zip(blocks, feats):
         x0 = min(r.x0 for r in b); y0 = min(r.y0 for r in b); y1 = max(r.y1 for r in b)
         sz = b[0].height * 0.78
