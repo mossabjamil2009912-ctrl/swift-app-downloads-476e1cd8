@@ -18,7 +18,7 @@ def _runs(v, gap):
     return out
 
 
-def flip(src, dst, pno, y0, y1, lab, val, extra=(), thr=200, colgap=6.0, doc=None, ralign=False):
+def flip(src, dst, pno, y0, y1, lab, val, extra=(), thr=200, colgap=6.0, doc=None, ralign=False, center=False):
     s = pymupdf.open(src); d = doc or pymupdf.open(src)
     sp = s[pno]; page = d[pno]
     lx0, lx1 = lab; vx0, vx1 = val
@@ -46,7 +46,13 @@ def flip(src, dst, pno, y0, y1, lab, val, extra=(), thr=200, colgap=6.0, doc=Non
         else:
             copies.append((pymupdf.Rect(lx0, ya, lx1, yb), new_l))
         vi0 = int((vx0 - lx0) * Z)
-        for c0, c1 in _runs(ink[a:b, vi0:].any(0), int(colgap * Z)):
+        row = ink[a:b, vi0:].any(0)
+        whole = _runs(row, int(25 * Z))
+        if center and len(whole) == 1:
+            x0 = vx0 + whole[0][0] / Z - 0.6; x1 = vx0 + whole[0][1] / Z + 0.6
+            copies.append((pymupdf.Rect(x0, ya, x1, yb), new_v0 + ((vx1 - vx0) - (x1 - x0)) / 2))
+            continue
+        for c0, c1 in _runs(row, int(colgap * Z)):
             x0 = vx0 + c0 / Z - 0.6; x1 = vx0 + c1 / Z + 0.6
             copies.append((pymupdf.Rect(x0, ya, x1, yb), new_v0 + (vx1 - x1)))
     for r, dx in extra:
