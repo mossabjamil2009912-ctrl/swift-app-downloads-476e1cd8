@@ -109,7 +109,9 @@ def table_page(page):
         if "\u0600" > s["ar"][:1] and s["ar"] == t:
             s["w"] = 400 if s["w"] == 600 else s["w"]
         rr = r
-        if t.startswith(("The altitude", "Battery mode", "Parallel", "-10~50", "-15~60", "15~60")):
+        if t.startswith(("-10~50", "-15~60", "15~60")):
+            s["maxw"] = 400
+        elif t.startswith(("The altitude", "Battery mode", "Parallel")):
             rr = pymupdf.Rect(r.x0, r.y0, r.x1, r.y0 + 6 if sz < 6 else r.y1)
             if t.startswith("The altitude"):
                 rr = pymupdf.Rect(r.x0, r.y0, r.x1, r.y0 + (2.2 if sz < 6 else 2) * (r.y1 - r.y0) * 1.6)
