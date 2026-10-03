@@ -30,7 +30,7 @@ tiles = [  # (x_text_left, right_edge, head_y, desc_y0, desc_y1, head, desc)
 ]
 for xl, xr, hy, d0, d1, h, ds in tiles:
     add(0, (xl - 2, hy - 9, xl + 94, hy + 13 if hy == 703 else hy + 7), {"ar": h, "r": xr, "w": 600, "size": 13, "color": TEAL}, (0, hy - 6, 1, hy + 6))
-    add(0, (xl, d0, xr + 2, d1), {"ar": ds, "r": xr, "w": 400, "size": 6.3, "color": GREY, "lh": 8.6}, (0, d0 + 1, 1, d0 + 9))
+    add(0, (xl, d0 - 7 if hy == 703 else d0, xr + 2, d1), {"ar": ds, "r": xr, "w": 400, "size": 6.3, "color": GREY, "lh": 8.6}, (0, d0 + 1, 1, d0 + 9))
 add(0, (330, 572, 440, 597), {"ar": "التطبيقات", "r": 562, "w": 700, "size": 15, "color": TEAL})
 add(0, (330, 608, 566, 668), {"ar": "صُممت RV12200 لتحل محل بطاريات الرصاص الحمضية ذات الدورة\nالعميقة، وهي مثالية للمركبات الترفيهية RV والقوارب والشاحنات\nوالكبائن وغيرها من تطبيقات الدورة العميقة خارج الشبكة.",
                              "r": 562, "w": 400, "size": 8, "color": 0x575859, "lh": 11.8}, (0, 613, 1, 625))
