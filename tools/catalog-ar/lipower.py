@@ -67,7 +67,10 @@ def mirror(page, drs, W):
                 q = it[1]; sh.draw_quad(pymupdf.Quad(f(q.ur), f(q.ul), f(q.lr), f(q.ll)))
             elif op == "c":
                 sh.draw_bezier(f(it[1]), f(it[2]), f(it[3]), f(it[4]))
-        sh.finish(color=d.get("color"), fill=d.get("fill"), width=d.get("width") or 1,
+        fill = d.get("fill")
+        if fill and sum(fill) < 0.4 and d["rect"].height > 30:
+            fill = (0.92, 0.92, 0.92)
+        sh.finish(color=d.get("color"), fill=fill, width=d.get("width") or 1,
                   closePath=d.get("closePath", False), even_odd=d.get("even_odd", False),
                   fill_opacity=d.get("fill_opacity") or 1, stroke_opacity=d.get("stroke_opacity") or 1)
         sh.commit()
@@ -77,7 +80,8 @@ def table_page(page):
     W = page.rect.width
     reg = pymupdf.Rect(36, 214, W - 36, 766)
     texts = [l for l in engine.lines(page) if reg.contains(l["bbox"].tl + (0.5, 0.5))]
-    drs = [d for d in page.get_drawings() if reg.contains(d["rect"])]
+    drs = [d for d in page.get_drawings() if reg.contains(d["rect"])
+           and not pymupdf.Rect(422, 645, 433, 706).contains(d["rect"])]
     page.add_redact_annot(reg, fill=False)
     for l in engine.lines(page):  # page header
         if l["t"] in ("Technical Data", "Lipower Inverters"):
@@ -97,9 +101,11 @@ def table_page(page):
             s = {"ar": ar, "r": W - r.x0, "w": 700, "size": sz * 1.08}
         elif (r.x0 + r.x1) / 2 < 300 and not t.startswith(("BZ", "2012")):
             s = {"ar": find(t, ITEM) or t, "cx": cx, "w": 600, "size": sz * 1.1}
+            if r.x0 > 250 or t.startswith(("Battery inverter", "Photovoltaic inverter")):
+                s["maxw"] = (r.x1 - r.x0) + 8
         else:
             ar = find(t, VAL) or t.replace("*", " × ").replace("x", " × ") if re.fullmatch(r"\d+[*x]\d+[*x]\d+", t) else (find(t, VAL) or t)
-            s = {"ar": ar, "cx": cx, "w": 400, "size": sz * 1.05, "maxw": 250}
+            s = {"ar": ar, "cx": cx, "w": 400, "size": sz * 1.05, "maxw": 225}
         if "\u0600" > s["ar"][:1] and s["ar"] == t:
             s["w"] = 400 if s["w"] == 600 else s["w"]
         rr = r
@@ -116,17 +122,23 @@ def feature_page(page, header, feats, title=None):
     W = page.rect.width
     reg = pymupdf.Rect(36, 528, W - 30, 726)
     texts = [l for l in engine.lines(page) if reg.contains(l["bbox"].tl + (0.5, 0.5))]
-    drs = [d for d in page.get_drawings() if reg.contains(d["rect"]) and d["rect"].width < 40]
-    for d in drs:
-        page.add_redact_annot(d["rect"] + (-0.5, -0.5, 0.5, 0.5), fill=False)
+    icons = [d["rect"] for d in page.get_drawings() if reg.contains(d["rect"]) and 18 < d["rect"].width < 36 and abs(d["rect"].width - d["rect"].height) < 2]
     for l in texts:
         page.add_redact_annot(l["bbox"], fill=False)
     hd = [l for l in engine.lines(page) if l["t"] in ("Single Phase Hybrid Inverter", "Product Features")]
     for l in hd:
         page.add_redact_annot(l["bbox"], fill=False)
-    page.apply_redactions(images=pymupdf.PDF_REDACT_IMAGE_NONE, graphics=pymupdf.PDF_REDACT_LINE_ART_REMOVE_IF_COVERED,
+    page.apply_redactions(images=pymupdf.PDF_REDACT_IMAGE_NONE, graphics=pymupdf.PDF_REDACT_LINE_ART_NONE,
                           text=pymupdf.PDF_REDACT_TEXT_REMOVE)
-    mirror(page, drs, W)
+    src = pymupdf.open(SRC_DOC)
+    pix = src[0].get_pixmap(dpi=36)
+    for R in icons:
+        R = R + (-8, -8, 8, 8)
+        px = pix.pixel(int((R.x1 + 4) * 0.5), int(R.y1 * 0.5))
+        page.draw_rect(R, color=None, fill=tuple(c / 255 for c in px[:3]))
+    for R in icons:
+        R = R + (-8, -8, 8, 8)
+        page.show_pdf_page(pymupdf.Rect(W - R.x1, R.y0, W - R.x0, R.y1), src, 0, clip=R)
     for l in hd:
         r = l["bbox"]
         if l["t"].startswith("Single"):
@@ -146,7 +158,11 @@ def feature_page(page, header, feats, title=None):
             else:
                 cur.append(r)
         blocks.append(cur)
-    assert len(blocks) == len(feats), (len(blocks), len(feats))
+    if len(blocks) == 10 and len(feats) == 11:  # catalog-17: 'Parallel up to 9 units' is outlined vector text
+        i = max(k for k, b in enumerate(blocks) if round(b[0].x0) == 280) + 1
+        blocks.insert(i, [pymupdf.Rect(279.6, 699.4, 380, 707.9), pymupdf.Rect(279.6, 707.9, 353, 716.4)])
+        page.draw_rect(pymupdf.Rect(278, 697, 400, 719), color=None, fill=(1, 1, 1))
+    assert len(blocks) == len(feats), [(round(b[0].x0), round(b[0].y0), len(b)) for b in blocks]
     for b, txt in zip(blocks, feats):
         x0 = min(r.x0 for r in b); y0 = min(r.y0 for r in b); y1 = max(r.y1 for r in b)
         sz = b[0].height * 0.78
@@ -176,6 +192,7 @@ JOBS = {15: F15, 16: FBZ, 17: FBZ}
 if __name__ == "__main__":
     for n in [int(a) for a in sys.argv[1:]] or JOBS:
         src = f'/dev-server/public/catalogs/catalog-{n}.pdf'; dst = f'/dev-server/public/catalogs/official-ar/catalog-{n}.pdf'
+        global SRC_DOC; SRC_DOC = src
         doc = pymupdf.open(src)
         feature_page(doc[0], None, JOBS[n]); table_page(doc[1])
         doc.subset_fonts(); doc.save(dst + '.tmp', garbage=4, deflate=True); os.replace(dst + '.tmp', dst)
