@@ -129,7 +129,9 @@ def place(page, r, s, size0, col0):
     lw = max(line_width(x, w, size) for x in ls)
     if "maxw" in s and lw > s["maxw"]:
         size *= s["maxw"] / lw; lw = s["maxw"]
-    if "r" in s:
+    if "cx" in s:
+        xr = s["cx"] + lw / 2
+    elif "r" in s:
         xr = s["r"]
     elif "l" in s:
         xr = s["l"] + lw
