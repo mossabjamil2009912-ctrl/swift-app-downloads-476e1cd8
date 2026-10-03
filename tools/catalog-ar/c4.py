@@ -13,7 +13,6 @@ def val(t): return {"ar": t, "r": VR}
 
 FR = 285  # features right edge
 p0 = {
-    "Residential ESS": {"ar": "نظام تخزين طاقة منزلي", "l": 28, "w": 600, "color": 0xffffff},
     "Product Features": {"ar": "مزايا المنتج", "r": FR, "w": 700},
     "·Flexible Expansion": {"ar": "· توسعة مرنة", "r": FR, "w": 700},
     "·Easy Maintenance": {"ar": "· صيانة سهلة", "r": FR, "w": 700},
@@ -63,15 +62,15 @@ p1.update({
     "10%~90%": val("من 10% إلى 90%"),
     "110kg / L520*W240*H781.2mm": val("110kg / L520*W240*H781.2mm"),
     "CE，CB，UN38.3，IEC 62619": val("CE، CB، UN38.3، IEC 62619"),
-    "Contact:": {"ar": "للتواصل:", "r": 570, "w": 600},
-    "Tel:": {"ar": "الهاتف:", "r": 570, "w": 600},
-    "https://www.hero-ee.com": {"ar": "https://www.hero-ee.com", "r": 570},
+    "Contact:": {"ar": "للتواصل:", "r": 395, "w": 600},
+    "Tel:": {"ar": "الهاتف:", "r": 395, "w": 600},
+    "https://www.hero-ee.com": {"ar": "https://www.hero-ee.com", "r": 395},
     "*The above is for reference only, the specification sheet shall prevail.":
         {"ar": "*المعلومات أعلاه للاسترشاد فقط، ويُعتمد بما ورد في ورقة المواصفات.", "r": 570},
     "Business Cooperation": {"ar": "التعاون التجاري", "anchor": "center"},
     "website": {"ar": "الموقع", "anchor": "center"},
 })
-engine.build(SRC, DST, {0: p0, 1: p1})
+engine.build(SRC, DST, {0: p0, 1: p1}, {0: [((28, 197, 205, 211), {"ar": "نظام تخزين طاقة منزلي", "l": 28, "w": 600, "size": 20, "color": 0xffffff})]})
 import pymupdf
 d = pymupdf.open(DST); d.subset_fonts(); d.save(DST + '.tmp', garbage=4, deflate=True)
 import os; os.replace(DST + '.tmp', DST)
