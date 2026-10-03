@@ -4,8 +4,8 @@ import engine, os, pymupdf
 
 SRC = '/dev-server/public/catalogs/catalog-2.pdf'
 DST = '/dev-server/public/catalogs/official-ar/catalog-2.pdf'
-LL, LV = 286, 168   # left table: label right edge, value right edge
-RL, RV = 570, 452   # right table
+LL, LV = 284, 168   # left table: label right edge, value right edge
+RL, RV = 568, 452   # right table
 W = 0xffffff
 
 
@@ -16,7 +16,7 @@ def hdr(t, r=LL): return {"ar": t, "r": r, "w": 700, "color": W}
 
 p0 = {
     "RV12100CH DATA SHEET·V1.0": {"ar": "نشرة مواصفات RV12100CH · V1.0", "l": 37, "color": W},
-    "Voltage:12.8 V | Capacity: 100 Ah | Energy: 1280 Wh": {"ar": "الجهد: 12.8 V | السعة: 100 Ah | الطاقة: 1280 Wh", "l": 34, "w": 400},
+    "Voltage:12.8 V | Capacity: 100 Ah | Energy: 1280 Wh": {"ar": "الجهد: 12.8 V | السعة: 100 Ah | الطاقة: 1280 Wh", "l": 34, "w": 400, "dy": 16},
     "Electrical Specification": hdr("المواصفات الكهربائية"),
     "Mechanical Specification": hdr("المواصفات الميكانيكية", RL),
     "Discharge Specification": hdr("مواصفات التفريغ"),
@@ -27,15 +27,15 @@ p0 = {
     # left table
     "Nominal Voltage": lab("الجهد الاسمي"), "12.8 VDC": val("12.8 VDC"),
     "Nominal Capacity": lab("السعة الاسمية"), "100 Ah": val("100 Ah"),
-    "Internal Resistance": lab("المقاومة الداخلية"), "< 10 mΩ": val("< 10 mΩ"),
-    "Self Discharge": lab("التفريغ الذاتي"), "≤ 3% per month": val("≤ 3% شهرياً"),
+    "Internal Resistance": lab("المقاومة الداخلية"), "< 10 mΩ": val("<10 mΩ"),
+    "Self Discharge": lab("التفريغ الذاتي"), "≤ 3% per month": val("≤3% شهرياً"),
     "Max. Batteries in Parallel": lab("أقصى عدد بطاريات على التوازي"), "8": val("8"),
-    "Design Life": lab("العمر التصميمي"), "≥ 10 years": val("≥ 10 سنوات"),
-    "Short Circuit Current Duration": lab("مدة تيار القصر"), "< 1 kA/100 us": val("< 1 kA/100 µs"),
-    "Cycle Life": lab("عمر الدورات"), "> 4500 (80% DOD, 0.5 C, 25 °C)": val("> 4500 دورة، 80% DOD، 0.5C، 25 °C"),
+    "Design Life": lab("العمر التصميمي"), "≥ 10 years": val("10 سنوات على الأقل"),
+    "Short Circuit Current Duration": lab("مدة تيار القصر"), "< 1 kA/100 us": val("<1 kA/100 µs"),
+    "Cycle Life": lab("عمر الدورات"), "> 4500 (80% DOD, 0.5 C, 25 °C)": val(">4500 دورة، 80% DOD، 0.5C، 25 °C"),
     "Max. Continuous Discharging Current": lab("أقصى تيار تفريغ مستمر"),
     "Peak Discharging Current": lab("تيار التفريغ الأقصى اللحظي"), "200 A@10 s": val("200 A لمدة 10 s"),
-    "Recommended Charging Current": lab("تيار الشحن الموصى به"), "≤50 A": val("≤ 50 A"),
+    "Recommended Charging Current": lab("تيار الشحن الموصى به"), "≤50 A": val("≤50 A"),
     "Max. Continuous Charging Current": lab("أقصى تيار شحن مستمر"),
     "Recommended Charging Voltage": lab("جهد الشحن الموصى به"), "14 V ~14.4 V": val("14~14.4 V"),
     "Storage Temperature Range": lab("نطاق حرارة التخزين"),
@@ -44,7 +44,7 @@ p0 = {
     "50 °F ~104 °F (10 °C ~ 40 °C)": val("من 10 °C إلى 40 °C"),
     "Operating Temperature": lab("درجة حرارة التشغيل"),
     "-4 °F ~ 122 °F (-20 °C ~ 50 °C)": val("من −20 °C إلى 50 °C"),
-    "*If charging is required when the": val("*عند الحاجة للشحن في حرارة أقل\nمن 0 °C، صِل الشاحن لتفعيل\nغشاء التسخين، وتبدأ البطارية\nالشحن عندما تسخن الخلايا\nإلى أكثر من 0 °C.", color=0xff0000, size=6.5, lh=9.3, dy=3),
+    "*If charging is required when the": val("*عند الحاجة للشحن في حرارة أقل\nمن 0 °C، صِل الشاحن لتفعيل\nغشاء التسخين، وتبدأ البطارية\nالشحن عندما تسخن الخلايا\nإلى أكثر من 0 °C", color=0xff0000, size=6.5, lh=9.3, dy=3),
     "temperature is below 32 °F (0 °C),": None, "please connect the charger to": None,
     "enable the heating film. The battery": None, "starts charging when the cell": None,
     "temperature is heated to above": None, "32 °F (0 °C).": None,
@@ -70,7 +70,7 @@ p0 = {
 # values shared by two rows ("100 A") are matched once by the engine -> handle explicitly
 VALS_100A = [((186, 404, 215, 414), "100 A"), ((187, 488, 215, 498), "100 A")]
 
-FL, FR = 300, 584  # feature text right edges (icons stay left of text)
+FL, FR = 288, 568  # feature text right edges (icons stay left of text)
 
 
 def ft(t, r): return {"ar": t, "r": r, "w": 700, "size": 8.5}
@@ -79,23 +79,23 @@ def fd(t, r, **k): return dict({"ar": t, "r": r}, **k)
 
 p1 = {
     "RV12100CH DATA SHEET·V1.0": {"ar": "نشرة مواصفات RV12100CH · V1.0", "l": 37, "color": W},
-    "Charge at different rates at 77 °F (25 °C)": hdr("الشحن بمعدلات مختلفة عند 25 °C", 300),
-    "Discharge at different rates at 113 °C (45 °C)": hdr("التفريغ بمعدلات مختلفة عند 45 °C", 584),
-    "Discharge at different rates at -4 °F (-20 °C)": hdr("التفريغ بمعدلات مختلفة عند −20 °C", 300),
-    "Discharge at different rates at 77 °F (25 °C)": hdr("التفريغ بمعدلات مختلفة عند 25 °C", 584),
-    "Key Features": hdr("المزايا الرئيسية", 584),
+    "Charge at different rates at 77 °F (25 °C)": hdr("الشحن بمعدلات مختلفة عند 25 °C", 288),
+    "Discharge at different rates at 113 °C (45 °C)": hdr("التفريغ بمعدلات مختلفة عند 45 °C", 568),
+    "Discharge at different rates at -4 °F (-20 °C)": hdr("التفريغ بمعدلات مختلفة عند −20 °C", 288),
+    "Discharge at different rates at 77 °F (25 °C)": hdr("التفريغ بمعدلات مختلفة عند 25 °C", 568),
+    "Key Features": hdr("المزايا الرئيسية", 568),
     "MORE CAPACITY": ft("سعة أكبر", FL),
     "100% of usable energy allows the battery to fully discharge.": fd("طاقة قابلة للاستخدام بنسبة 100% تتيح تفريغ البطارية بالكامل.", FL, dy=1.5),
     "LONG CYCLE LIFE": ft("عمر دورات طويل", FR),
-    "More than 4500 cycles at a depth of discharge of 80%.": fd("أكثر من 4500 دورة عند عمق تفريغ 80%.", FR, dy=1.5),
+    "More than 4500 cycles at a depth of discharge of 80%.": fd("أكثر من 4500 دورة بعمق تفريغ 80%", FR, dy=1.5),
     "LIGHT WEIGHT": ft("وزن خفيف", FL),
     "50% lighter than lead-acid batteries of the same capacity.": fd("أخف بنسبة 50% من بطاريات الرصاص الحمضية بنفس السعة.", FL, dy=1.5),
     "REAL-TIME MONITORING": ft("مراقبة لحظية", FR),
     "The running indicator, alarm indicator and SoC indicators allow you to": fd("مؤشرات التشغيل والإنذار وحالة الشحن SoC تتيح لك\nمراقبة حالة البطارية لحظياً.", FR, lh=9, dy=1.5),
     "monitor battery status in real time.": None,
     "ENERGY EXPANSION": ft("توسعة الطاقة", FL),
-    "Up to 8 batteries in parallel connection, building a 12 V 800 Ah battery": fd("حتى 8 بطاريات على التوازي لبناء نظام 12 V بسعة 800 Ah\nوبطاقة قصوى 10.24 kWh.", FL, lh=8.5, dy=1.5),
-    "system with a max. energy output of 10.24 kWh.": None,
+    "Up to 8 batteries in parallel connection, building a 12 V 800 Ah battery": fd("حتى 8 بطاريات على التوازي لبناء نظام 12 V بسعة 800 Ah\nوبطاقة قصوى 10.24 kWh", FL, lh=8.5, dy=1.5),
+    "system with a max. energy output of 10.24 kWh": None,
     "LOW-TEMPERATURE HEATING": ft("تسخين في الحرارة المنخفضة", FR),
     "The heating film allows the battery to work in extreme cold.": fd("غشاء التسخين يتيح للبطارية العمل في البرد الشديد.", FR, dy=1.5),
     "LOW SELF-DISCHARGE LOSS": ft("تفريغ ذاتي منخفض", FL),
@@ -105,15 +105,17 @@ p1 = {
     "The built-in BMS manages charging and discharging status, helps in": fd("نظام BMS المدمج يدير الشحن والتفريغ، ويوازن الخلايا،\nويوفر حمايات متعددة.", FR, lh=8.5, dy=1.5),
     "balancing the individual cells, and provides multiple protections.": None,
     "Tel: +86-21-51317699 | E-mail: service@pylontech.com.cn | Web: en.pylontech.com.cn":
-        {"ar": "الهاتف: +86-21-51317699 | البريد: service@pylontech.com.cn | الموقع: en.pylontech.com.cn", "r": 584},
+        {"ar": "الهاتف: +86-21-51317699 | البريد: service@pylontech.com.cn | الموقع: en.pylontech.com.cn", "r": 568},
     "5/F, No.71- 72, Lane 887, Zu Chongzhi Road, China (Shanghai) Pilot Free Trade Zone":
-        {"ar": "الطابق 5، رقم 71-72، الممر 887، طريق Zu Chongzhi، منطقة التجارة الحرة التجريبية، شنغهاي، الصين", "r": 584},
+        {"ar": "الطابق 5، رقم 71-72، الممر 887، طريق Zu Chongzhi، منطقة التجارة الحرة التجريبية، شنغهاي، الصين", "r": 568},
 }
 
 p0["100 A"] = val("100 A")
 engine.build(SRC, DST, {0: p0, 1: p1})
 
 d = pymupdf.open(DST)
+_s = pymupdf.open(SRC)
+d[0].show_pdf_page(pymupdf.Rect(30, 110, 200, 150), _s, 0, clip=pymupdf.Rect(30, 110, 200, 150))
 d.subset_fonts(); d.save(DST + '.tmp', garbage=4, deflate=True)
 os.replace(DST + '.tmp', DST)
 engine.render(DST, '/tmp/cat/c2n', 110)
