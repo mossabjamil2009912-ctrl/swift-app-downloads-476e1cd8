@@ -53,7 +53,8 @@ def ltr(t):
 def seq(pieces, y0, size, weight=400, right=None, center=None):
     """pieces in visual right-to-left order; each laid out separately so bidi can't reorder them"""
     f = FONTS[weight]; gap = size * 0.25
-    ws = [f.text_length(t.replace('&lt;', '<').replace('&gt;', '>'), size) + 1 for t in pieces]
+    import re
+    ws = [f.text_length(t, size) * (0.8 if re.search('[\u0600-\u06FF]', t) else 1) + 1 for t in pieces]
     tot = sum(ws) + gap * (len(ws) - 1)
     x = right if right is not None else center + tot / 2
     for t, w in zip(pieces, ws):
@@ -89,8 +90,8 @@ rows = [
     ('الرطوبة النسبية (RH)', ['من', '5%', 'إلى', '95%', 'بدون تكثّف']),
     ('تيار القصر / مدته (A)', ltr('&lt;2000/1ms')),
     ('الارتفاع عن سطح البحر (m)', ltr('≤4000')),
-    (['العمر التصميمي', '(عند', '25 °C', ')'], '15 سنة'),
-    (['عمر الدورات', '(عند', '25 °C', ')'], ltr('&gt;6,000')),
+    (['العمر التصميمي عند', '25 °C'], '15 سنة'),
+    (['عمر الدورات عند', '25 °C'], ltr('&gt;6,000')),
     ('الشهادات', ltr('IEC62619/UN38.3/RoHS/Reach/WEEE/MSDS')),
 ]
 top, h = 305.86, 17.97
