@@ -13,7 +13,7 @@ for y0, y1 in segs:
     d = flip(S, OUT, 1, y0, y1, (L, M), (M, R), doc=d, ralign=True, center=True)
 s = pymupdf.open(S); page = d[1]; Z = 4
 for y0, y1 in bands:
-    pm = s[1].get_pixmap(clip=pymupdf.Rect(L + 0.5, y0, R - 0.5, y1), matrix=pymupdf.Matrix(Z, Z))
+    pm = s[1].get_pixmap(clip=pymupdf.Rect(L + 1.5, y0 + 1.5, R - 1.5, y1 - 1.5), matrix=pymupdf.Matrix(Z, Z))
     rgb = np.frombuffer(pm.samples, np.uint8).reshape(pm.h, pm.w, pm.n)[:, :, :3]
     lite = rgb.mean(2) > 150
     cols = lite.any(0)
@@ -21,8 +21,8 @@ for y0, y1 in bands:
     page.draw_rect(pymupdf.Rect(40, y0 - 0.3, L - 0.3, y1 + 0.3), color=None, fill=(0.953, 0.953, 0.953), overlay=True)
     page.draw_rect(pymupdf.Rect(L, y0, R, y1), color=None, fill=NAVY, overlay=True)
     for c0, c1 in runs:
-        x0 = L + 0.5 + c0 / Z - 0.6; x1 = L + 0.5 + c1 / Z + 0.6
-        if x0 < L + 3: x0 = 56  # label overflowing the table edge
+        x0 = L + 1.5 + c0 / Z - 0.6; x1 = L + 1.5 + c1 / Z + 0.6
+        if x0 < L + 2.5: x0 = 56  # label overflowing the table edge
         r = pymupdf.Rect(max(x0, 41), y0, min(x1, R - 0.5), y1)
         print(round(y0), round(x0), round(x1))
         if x0 < M:   # label -> flush right
