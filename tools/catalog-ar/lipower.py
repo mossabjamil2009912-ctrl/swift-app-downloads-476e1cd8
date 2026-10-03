@@ -155,6 +155,10 @@ def feature_page(page, header, feats, title=None):
             else:
                 cur.append(r)
         blocks.append(cur)
+    if len(blocks) == 10 and len(feats) == 11:  # catalog-17: 'Parallel up to 9 units' is outlined vector text
+        i = max(k for k, b in enumerate(blocks) if round(b[0].x0) == 280) + 1
+        blocks.insert(i, [pymupdf.Rect(279.6, 699.4, 380, 707.9), pymupdf.Rect(279.6, 707.9, 353, 716.4)])
+        page.draw_rect(pymupdf.Rect(278, 697, 400, 719), color=None, fill=(1, 1, 1))
     assert len(blocks) == len(feats), [(round(b[0].x0), round(b[0].y0), len(b)) for b in blocks]
     for b, txt in zip(blocks, feats):
         x0 = min(r.x0 for r in b); y0 = min(r.y0 for r in b); y1 = max(r.y1 for r in b)
