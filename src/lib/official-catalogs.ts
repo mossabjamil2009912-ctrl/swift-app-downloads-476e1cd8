@@ -4,7 +4,7 @@ import type { Product } from "./products-data";
 
 // أسماء ملفات الكتالوجات العربية الموجودة فعلياً في /catalogs/official-ar/
 const AR_FILES = [
-  "catalog-11", "catalog-13", "catalog-15", "catalog-16", "catalog-17", "catalog-2", "catalog-3",
+  "catalog-1", "catalog-11", "catalog-13", "catalog-15", "catalog-16", "catalog-17", "catalog-2", "catalog-3",
   "catalog-4", "catalog-5", "catalog-6", "catalog-7",
   "deye-sun-14-20k-sg05lp3--16k", "deye-sun-14-20k-sg05lp3--20k",
   "deye-sun-29-9-50k-sg01hp3--30k", "deye-sun-29-9-50k-sg01hp3--50k",

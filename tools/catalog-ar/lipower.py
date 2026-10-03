@@ -35,7 +35,7 @@ VAL = [("None", "لا يوجد"), ("Pure sine wave", "موجة جيبية نقي
        ("Battery mode", "وضع البطارية: 11s عند حمل 105%~150%، و2s عند 150%~200%، و400ms فوق 200%"),
        ("It can display", "يعرض وضع التشغيل والحمل والدخل والخرج وغيرها"), ("Baud rate", "معدل الباود 240"),
        ("Lithium battery BMS", "بطاقة اتصال BMS لبطاريات الليثيوم، بطاقة WIFI، بطاقة تلامس جاف، وغيرها"),
-       ("-10~50", "من −10°C إلى 50°C"), ("-15~60", "من −15°C إلى 60°C"), ("15~60", "من −15°C إلى 60°C"),
+       ("-10~50", "من −10°C إلى +50°C"), ("-15~60", "من −15°C إلى +60°C"), ("15~60", "من −15°C إلى +60°C"),
        ("20%~95%", "من 20% إلى 95% بدون تكاثف"),
        ("The altitude", "لا يتجاوز 1000 متر، وفوق ذلك تُخفَّض القدرة؛ الحد الأقصى 4000 متر وفق IEC 62040"),
        ("Parallel", "توازي وربط بالشبكة")]
@@ -81,7 +81,8 @@ def table_page(page):
     reg = pymupdf.Rect(36, 214, W - 36, 766)
     texts = [l for l in engine.lines(page) if reg.contains(l["bbox"].tl + (0.5, 0.5))]
     drs = [d for d in page.get_drawings() if reg.contains(d["rect"])
-           and not pymupdf.Rect(422, 645, 433, 706).contains(d["rect"])]
+           and not pymupdf.Rect(422, 645, 433, 706).contains(d["rect"])
+           and not pymupdf.Rect(433, 650, 444, 690).contains(d["rect"])]  # outlined ℃ glyphs
     page.add_redact_annot(reg, fill=False)
     for l in engine.lines(page):  # page header
         if l["t"] in ("Technical Data", "Lipower Inverters"):
@@ -109,7 +110,9 @@ def table_page(page):
         if "\u0600" > s["ar"][:1] and s["ar"] == t:
             s["w"] = 400 if s["w"] == 600 else s["w"]
         rr = r
-        if t.startswith(("The altitude", "Battery mode", "Parallel", "-10~50", "-15~60", "15~60")):
+        if t.startswith(("-10~50", "-15~60", "15~60")):
+            s["maxw"] = 400
+        elif t.startswith(("The altitude", "Battery mode", "Parallel")):
             rr = pymupdf.Rect(r.x0, r.y0, r.x1, r.y0 + 6 if sz < 6 else r.y1)
             if t.startswith("The altitude"):
                 rr = pymupdf.Rect(r.x0, r.y0, r.x1, r.y0 + (2.2 if sz < 6 else 2) * (r.y1 - r.y0) * 1.6)
@@ -188,7 +191,8 @@ FBZ = ["إعادة تشغيل تلقائية لبطارية الليثيوم\nو
        "خيار اتصال WIFI خارجي\nللمراقبة في أي وقت",
        "دعم BMS لبطاريات الليثيوم"]
 
-JOBS = {15: F15, 16: FBZ, 17: FBZ}
+FBZ4 = [f for f in FBZ if not f.startswith("تشغيل متوازٍ")]  # BZ4024 original lists 10 features
+JOBS = {15: F15, 16: FBZ, 17: FBZ4}
 if __name__ == "__main__":
     for n in [int(a) for a in sys.argv[1:]] or JOBS:
         src = f'/dev-server/public/catalogs/catalog-{n}.pdf'; dst = f'/dev-server/public/catalogs/official-ar/catalog-{n}.pdf'
