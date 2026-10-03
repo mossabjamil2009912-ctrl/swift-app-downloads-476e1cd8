@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useMemo, useState, type ReactNode } from "re
 const PdfPages = lazy(() => import("@/components/pdf-pages"));
 import { ArrowRight, Search, BatteryCharging, Check, ChevronDown, Container, Copy, Download, Eye, FileText, Gauge, Info, Layers, Link2, ListChecks, MessageCircle, Play, Share2, Sparkles, Sun, Users, Wrench, X, Zap } from "lucide-react";
 import QRCode from "qrcode";
+import { createPortal } from "react-dom";
 import { CATEGORIES, findProduct, matchCompatibleProducts, productsByCategory, quickSpecs, type Product, type ProductCategory, type ProductFile } from "@/lib/products-data";
 import { isVoiceOn, isVoicePlatform, prepareSpeech, silenceNextScreen, speakScreen, speakScreenAfterCurrent, stopSpeaking } from "@/lib/voice-guide";
 import ProductVideoPlayer from "@/components/product-video";
@@ -399,8 +400,9 @@ async function downloadFile(file: ProductFile) {
 
 /** نافذة عرض ملف PDF داخل التطبيق. */
 function PdfViewer({ file, onClose }: { file: ProductFile; onClose: () => void }) {
-  return (
-    <div className="fixed inset-0 z-[70] flex flex-col bg-navy/80 p-2 backdrop-blur-sm sm:p-4" role="dialog" aria-modal="true">
+  if (typeof document === "undefined") return null;
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex flex-col bg-navy/80 p-2 backdrop-blur-sm sm:p-4" role="dialog" aria-modal="true">
       <div className="mx-auto flex h-full w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-2xl">
         <div className="flex items-center gap-2 border-b border-border px-3 py-2">
           <FileText className="size-4 shrink-0 text-brand" />
@@ -410,7 +412,8 @@ function PdfViewer({ file, onClose }: { file: ProductFile; onClose: () => void }
         </div>
         <Suspense fallback={<div className="flex-1 bg-muted" />}><PdfPages url={file.url} /></Suspense>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 
@@ -602,7 +605,7 @@ function ProductDetail({ product, onOpen, onBack, backLabel }: { product: Produc
             <p className="mt-2 text-xs text-muted-foreground">المصدر: {product.compatible.source}</p>
           </Section>
         )}
-        <Section icon={<FileText />} title="الكتالوجات والملفات">
+        <Section icon={<FileText />} title="الكتالوجات والملفات" defaultOpen>
           {(() => {
             const en = officialCatalogUrl(product, "en");
             const ar = officialCatalogUrl(product, "ar");
