@@ -40,7 +40,7 @@ def runs(line):
             # a token mixing Arabic + latin (e.g. "وLID" or "(LCOE)،") -> split
             parts = re.findall(r"[\u0600-\u06FF،؛]+|[^\u0600-\u06FF،؛]+", t)
             for p in parts:
-                out.append((p, not AR.search(p) and p not in "،؛"))
+                out.append((p, "n" if not re.search(r"[A-Za-z0-9]", p) and not AR.search(p) else (not AR.search(p) and p not in "،؛")))
         elif not re.search(r"[A-Za-z0-9]", t):
             out.append((t, "n"))
         else:
