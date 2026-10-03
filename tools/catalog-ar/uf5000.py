@@ -27,7 +27,7 @@ p.apply_redactions(images=pymupdf.PDF_REDACT_IMAGE_NONE, graphics=pymupdf.PDF_RE
 out = pymupdf.open()
 pg = out.new_page(width=p.rect.width, height=p.rect.height)
 pg.show_pdf_page(pg.rect, clean, 0)
-for r in [(40, 120, 560, 200), (40, 270, 560, 700)]:
+for r in [(200, 22, 548, 48), (40, 120, 560, 200), (40, 270, 560, 700)]:
     pg.draw_rect(r, color=None, fill=W)
 # move feature icons to mirrored positions
 for (x0, y0, x1, y1) in [(58, 130, 86, 158), (58, 166, 86, 194), (322, 126, 352, 158), (322, 166, 352, 194)]:
@@ -41,7 +41,7 @@ def box(rect, text, size, weight=400, align='right'):
 
 
 def ltr(t):
-    return f'<span dir="ltr">{t}</span>'
+    return '\u2066' + t + '\u2069'
 
 # header (teal square kept on the right)
 box((250, 26, 545, 46), '<b>بطارية جهد منخفض</b> / تُركَّب في خزانة (رف)', 10, 400)
@@ -95,6 +95,7 @@ for k, (lab, val) in enumerate([('(اعتيادي)', '100'), ('(أقصى)', '100
     box((SUBX - 90, y0 + 3.5, SUBX - 6, y0 + h), lab, 7.5, 400)
     box((L, y0 + 3.5, 2 * VC - L, y0 + h), ltr(val), 7.5, 400, 'center')
 
+out.subset_fonts()
 out.save(DST, garbage=3, deflate=True)
 out[0].get_pixmap(dpi=110).save('/tmp/cat/uf-new.png')
 print('ok')
