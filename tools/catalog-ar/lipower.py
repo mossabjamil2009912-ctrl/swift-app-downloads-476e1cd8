@@ -119,17 +119,21 @@ def feature_page(page, header, feats, title=None):
     W = page.rect.width
     reg = pymupdf.Rect(36, 528, W - 30, 726)
     texts = [l for l in engine.lines(page) if reg.contains(l["bbox"].tl + (0.5, 0.5))]
-    drs = [d for d in page.get_drawings() if reg.contains(d["rect"]) and d["rect"].width < 60]
-    for d in drs:
-        page.add_redact_annot(d["rect"] + (-0.5, -0.5, 0.5, 0.5), fill=False)
+    icons = [d["rect"] for d in page.get_drawings() if reg.contains(d["rect"]) and 24 < d["rect"].width < 36 and abs(d["rect"].width - d["rect"].height) < 2]
     for l in texts:
         page.add_redact_annot(l["bbox"], fill=False)
     hd = [l for l in engine.lines(page) if l["t"] in ("Single Phase Hybrid Inverter", "Product Features")]
     for l in hd:
         page.add_redact_annot(l["bbox"], fill=False)
-    page.apply_redactions(images=pymupdf.PDF_REDACT_IMAGE_NONE, graphics=pymupdf.PDF_REDACT_LINE_ART_REMOVE_IF_COVERED,
+    page.apply_redactions(images=pymupdf.PDF_REDACT_IMAGE_NONE, graphics=pymupdf.PDF_REDACT_LINE_ART_NONE,
                           text=pymupdf.PDF_REDACT_TEXT_REMOVE)
-    mirror(page, drs, W)
+    src = pymupdf.open(SRC_DOC)
+    for R in icons:
+        R = R + (-8, -8, 8, 8)
+        page.show_pdf_page(R, src, 0, clip=pymupdf.Rect(W - 2 - R.width, R.y0, W - 2, R.y1))
+    for R in icons:
+        R = R + (-8, -8, 8, 8)
+        page.show_pdf_page(pymupdf.Rect(W - R.x1, R.y0, W - R.x0, R.y1), src, 0, clip=R)
     for l in hd:
         r = l["bbox"]
         if l["t"].startswith("Single"):
@@ -179,6 +183,7 @@ JOBS = {15: F15, 16: FBZ, 17: FBZ}
 if __name__ == "__main__":
     for n in [int(a) for a in sys.argv[1:]] or JOBS:
         src = f'/dev-server/public/catalogs/catalog-{n}.pdf'; dst = f'/dev-server/public/catalogs/official-ar/catalog-{n}.pdf'
+        global SRC_DOC; SRC_DOC = src
         doc = pymupdf.open(src)
         feature_page(doc[0], None, JOBS[n]); table_page(doc[1])
         doc.subset_fonts(); doc.save(dst + '.tmp', garbage=4, deflate=True); os.replace(dst + '.tmp', dst)
