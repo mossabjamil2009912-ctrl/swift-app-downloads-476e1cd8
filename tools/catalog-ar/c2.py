@@ -110,8 +110,8 @@ p1 = {
         {"ar": "الطابق 5، رقم 71-72، الممر 887، طريق Zu Chongzhi، منطقة التجارة الحرة التجريبية، شنغهاي، الصين", "r": 584},
 }
 
-extra0 = [(r, val(t)) for r, t in VALS_100A]
-engine.build(SRC, DST, {0: p0, 1: p1}, {0: extra0})
+p0["100 A"] = val("100 A")
+engine.build(SRC, DST, {0: p0, 1: p1})
 
 d = pymupdf.open(DST)
 d.subset_fonts(); d.save(DST + '.tmp', garbage=4, deflate=True)
