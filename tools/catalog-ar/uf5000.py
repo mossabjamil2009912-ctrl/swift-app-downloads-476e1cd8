@@ -1,3 +1,4 @@
+import re
 """Rebuild Arabic UF5000 datasheet (RTL) from the English original.
 Fonts: IBM Plex Sans Arabic in /tmp/cat/f (Bold/SemiBold/Regular)."""
 import pymupdf
@@ -71,7 +72,12 @@ def seq(pieces, y0, size, weight=400, right=None, center=None):
     tot = sum(ws) + gap * (len(ws) - 1)
     x = right if right is not None else center + tot / 2
     for t, w in zip(pieces, ws):
-        box((x - w - 6, y0, x + 6, y0 + size * 2), t, size, weight, 'center')
+        if re.search('[\u0600-\u06FF]', t):
+            box((x - w - 6, y0, x + 6, y0 + size * 2), t, size, weight, 'center')
+        else:
+            n = {400: 'Regular', 600: 'SemiBold', 700: 'Bold'}[weight]
+            pg.insert_text((x - w, y0 + size * 1.02), t, fontsize=size, fontname='F' + n,
+                           fontfile=f'/tmp/cat/f/IBMPlexSansArabic-{n}.ttf', color=(0.135, 0.094, 0.082))
         x -= w + gap
 
 # header (teal square kept on the right)
