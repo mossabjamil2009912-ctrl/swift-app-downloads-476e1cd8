@@ -17,7 +17,6 @@ p0 = {
     "dustproofed, smoke & salty air resistant.": {"ar": "ومحكمة ضد الغبار، ومقاومة للدخان والهواء المالح.", "r": 588, "w": 400, "dy": 3},
     "Flexible Installation": {"ar": "تركيب مرن", "r": 226, "w": 700, "size": 15},
     "Wall-mounted or ﬂoor-standing.": {"ar": "تثبيت على الجدار أو على الأرض.", "r": 226, "w": 400, "dy": 3},
-    "Wall-mounted or floor-standing.": {"ar": "تثبيت على الجدار أو على الأرض.", "r": 226, "w": 400, "dy": 3},
     "Smart Monitoring": {"ar": "مراقبة ذكية", "r": 477, "w": 700, "size": 15},
     "APP & LED display": {"ar": "تطبيق جوال وشاشة LED", "r": 477, "w": 400, "dy": 3},
 }
@@ -35,13 +34,13 @@ labels = {
     "Protective Class": "فئة الحماية", "IP Rating of Enclosure": "درجة حماية الغلاف",
     "Anti-corrosion": "مقاومة التآكل", "Humidity(%, RH, No Condensation)": "الرطوبة (%RH، بدون تكاثف)",
     "Altitude(m)": "الارتفاع (m)", "Certifications": "الشهادات",
-    "Design Life (year) (25°C /77℉)": "العمر التصميمي بالسنوات عند 25 °C", "Cycle Life (25°C /77℉) ù*": "عمر الدورات عند 25 °C****",
+    "Design Life (year) (25°C /77℉)": "العمر التصميمي بالسنوات عند 25 °C", "Cycle Life (25°C /77℉) ù*": "عمر الدورات**** عند 25 °C",
     "Interaction": "التفاعل", "Fire extinguishing": "إطفاء الحريق",
     "Working": "درجة حرارة التشغيل", "Temperature": "(°C) ***", "(°C ) ***": None,
     "charging:": {"ar": "الشحن:", "r": 477, "w": 400}, "discharging:": {"ar": "التفريغ:", "r": 477, "w": 400},
 }
 p1 = {k: (lab(v) if isinstance(v, str) else v) for k, v in labels.items()}
-p1["Working"] = {"ar": "درجة حرارة\nالتشغيل (°C)***", "r": LR, "w": 600, "lh": 9.5, "dy": 9}
+p1["Working"] = {"ar": "درجة حرارة\nالتشغيل (°C)***", "r": LR, "w": 600, "lh": 8.6, "dy": 4.5, "size": 7.2}
 p1["Temperature"] = None
 vals = {"51.2": None, "16076": None, "100": None, "435(W)*240(D)*900(H)": "435 (W) × 240 (D) × 900 (H)", "130kg": "130 kg",
         "40 ~ 56.8": "40~56.8", "56 ~ 56.8": "56~56.8", "200/200": None, "300A@15s": "300 A لمدة 15 s", "CAN，RS485": "CAN, RS485",
