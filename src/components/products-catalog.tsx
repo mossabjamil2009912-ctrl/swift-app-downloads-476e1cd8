@@ -407,7 +407,7 @@ function PdfViewer({ file, onClose }: { file: ProductFile; onClose: () => void }
           <button type="button" onClick={() => downloadFile(file)} className="rounded-full bg-navy-soft px-3 py-1 text-[11px] font-bold text-navy transition hover:opacity-90">تحميل</button>
           <button type="button" onClick={onClose} aria-label="إغلاق" className="grid size-7 place-items-center rounded-full bg-muted text-navy transition hover:bg-border"><X className="size-4" /></button>
         </div>
-        <iframe src={file.url} title={file.label} className="h-full w-full flex-1 bg-muted" />
+        <Suspense fallback={<div className="flex-1 bg-muted" />}><PdfPages url={file.url} /></Suspense>
       </div>
     </div>
   );
@@ -610,7 +610,7 @@ function ProductDetail({ product, onOpen, onBack, backLabel }: { product: Produc
               <div dir={dir} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border px-3 py-2">
                 <span className="flex items-center gap-2 text-sm font-bold text-navy"><FileText className="size-4 text-brand" /> {label} <span className="text-xs font-normal text-muted-foreground">(PDF)</span></span>
                 <span className="flex gap-1.5">
-                  <a href={url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 rounded-full bg-skyline px-3 py-1 text-xs font-bold text-skyline-foreground transition hover:opacity-90"><Eye className="size-3.5" /> {open}</a>
+                  <button type="button" onClick={() => setViewFile({ kind: "Datasheet", label, url })} className="inline-flex items-center gap-1 rounded-full bg-skyline px-3 py-1 text-xs font-bold text-skyline-foreground transition hover:opacity-90"><Eye className="size-3.5" /> {open}</button>
                   <button type="button" onClick={() => downloadFile({ kind: "Datasheet", label, url })} className="inline-flex items-center gap-1 rounded-full bg-navy-soft px-3 py-1 text-xs font-bold text-navy transition hover:opacity-90"><Download className="size-3.5" /> {dl}</button>
                 </span>
               </div>
