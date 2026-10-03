@@ -1,3 +1,4 @@
+import re
 """Rebuild Arabic UF5000 datasheet (RTL) from the English original.
 Fonts: IBM Plex Sans Arabic in /tmp/cat/f (Bold/SemiBold/Regular)."""
 import pymupdf
@@ -46,19 +47,37 @@ def box(rect, text, size, weight=400, align='right'):
 FONTS = {w: pymupdf.Font(fontfile=f'/tmp/cat/f/IBMPlexSansArabic-{n}.ttf') for w, n in [(400, 'Regular'), (600, 'SemiBold'), (700, 'Bold')]}
 
 
+import uharfbuzz as hb
+_HB = {}
+
+
+def hbw(t, w, size):
+    if w not in _HB:
+        n = {400: 'Regular', 600: 'SemiBold', 700: 'Bold'}[w]
+        face = hb.Face(hb.Blob.from_file_path(f'/tmp/cat/f/IBMPlexSansArabic-{n}.ttf'))
+        _HB[w] = (hb.Font(face), face.upem)
+    font, upem = _HB[w]
+    buf = hb.Buffer(); buf.add_str(t); buf.guess_segment_properties(); hb.shape(font, buf, {})
+    return sum(p.x_advance for p in buf.glyph_positions) * size / upem
+
+
 def ltr(t):
     return t
 
 
 def seq(pieces, y0, size, weight=400, right=None, center=None):
     """pieces in visual right-to-left order; each laid out separately so bidi can't reorder them"""
-    f = FONTS[weight]; gap = size * 0.25
-    import re
-    ws = [f.text_length(t, size) * (0.8 if re.search('[\u0600-\u06FF]', t) else 1) + 1 for t in pieces]
+    f = FONTS[weight]; gap = size * 0.3
+    ws = [hbw(t, weight, size) for t in pieces]
     tot = sum(ws) + gap * (len(ws) - 1)
     x = right if right is not None else center + tot / 2
     for t, w in zip(pieces, ws):
-        box((x - w - 2, y0, x + 2, y0 + size * 2), t, size, weight, 'center')
+        if re.search('[\u0600-\u06FF]', t):
+            box((x - w - 6, y0, x + 6, y0 + size * 2), t, size, weight, 'center')
+        else:
+            n = {400: 'Regular', 600: 'SemiBold', 700: 'Bold'}[weight]
+            pg.insert_text((x - w, y0 + size * 1.02), t, fontsize=size, fontname='F' + n,
+                           fontfile=f'/tmp/cat/f/IBMPlexSansArabic-{n}.ttf', color=(0.135, 0.094, 0.082))
         x -= w + gap
 
 # header (teal square kept on the right)
@@ -103,7 +122,7 @@ for i, row in enumerate(rows):
     pg.draw_line((L if full else L, y1), (R if full else SUBX, y1), color=col, width=0.5)
     if row:
         lab, val = row
-        if isinstance(lab, list): seq(lab, y0 + 3.5, 7.5, 600, right=R)
+        if isinstance(lab, list): seq(lab, y0 + 3.5, 7.5, 600, right=R - 2)
         else: box((SPLIT - 10, y0 + 3.5, R, y1), lab, 7.5, 600)
         if isinstance(val, list): seq(val, y0 + 3.5, 7.5, 400, center=VC)
         else: box((L, y0 + 3.5, 2 * VC - L, y1), val, 7.5, 400, 'center')
