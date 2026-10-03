@@ -95,10 +95,10 @@ for pno, items in jobs.items():
     for red in reds:
         if any(o is not red and o.contains(red) for o in reds):
             continue  # nested boxes break covered-line-art removal
-        page.add_redact_annot(red, fill=False)
-    page.apply_redactions(images=pymupdf.PDF_REDACT_IMAGE_NONE,
-                          graphics=pymupdf.PDF_REDACT_LINE_ART_REMOVE_IF_COVERED,
-                          text=pymupdf.PDF_REDACT_TEXT_REMOVE)
+        page.add_redact_annot(red, fill=False)  # one box per pass: batched passes leave some glyphs behind
+        page.apply_redactions(images=pymupdf.PDF_REDACT_IMAGE_NONE,
+                              graphics=pymupdf.PDF_REDACT_LINE_ART_REMOVE_IF_COVERED,
+                              text=pymupdf.PDF_REDACT_TEXT_REMOVE)
     for _, at, spec in items:
         if spec:
             engine.place(page, at, spec, spec.get("size", 7), spec.get("color", GREY))
