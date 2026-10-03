@@ -22,9 +22,7 @@ for y0, y1 in bands:
     page.draw_rect(pymupdf.Rect(L, y0, R, y1), color=None, fill=NAVY, overlay=True)
     for c0, c1 in runs:
         x0 = L + 1.5 + c0 / Z - 0.6; x1 = L + 1.5 + c1 / Z + 0.6
-        if x0 < L + 2.5: x0 = 56  # label overflowing the table edge
-        r = pymupdf.Rect(max(x0, 41), y0, min(x1, R - 0.5), y1)
-        print(round(y0), round(x0), round(x1))
+        r = pymupdf.Rect(max(x0, L + 1), y0, min(x1, R - 0.5), y1)
         if x0 < M:   # label -> flush right
             nx = R - 4 - r.width
         else:        # value -> centred in left value column
