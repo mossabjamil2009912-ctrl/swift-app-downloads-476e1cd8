@@ -91,9 +91,11 @@ add(1, (55, 766, 187, 797), {"ar": "شركة Pylon Technologies المحدودة
 
 for pno, items in jobs.items():
     page = doc[pno]
-    for red, _, _ in items:
-        if red is not None:
-            page.add_redact_annot(red, fill=False)
+    reds = [r for r, _, _ in items if r is not None]
+    for red in reds:
+        if any(o is not red and o.contains(red) for o in reds):
+            continue  # nested boxes break covered-line-art removal
+        page.add_redact_annot(red, fill=False)
     page.apply_redactions(images=pymupdf.PDF_REDACT_IMAGE_NONE,
                           graphics=pymupdf.PDF_REDACT_LINE_ART_REMOVE_IF_COVERED,
                           text=pymupdf.PDF_REDACT_TEXT_REMOVE)
