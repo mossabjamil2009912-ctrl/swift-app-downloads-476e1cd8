@@ -80,7 +80,8 @@ def table_page(page):
     W = page.rect.width
     reg = pymupdf.Rect(36, 214, W - 36, 766)
     texts = [l for l in engine.lines(page) if reg.contains(l["bbox"].tl + (0.5, 0.5))]
-    drs = [d for d in page.get_drawings() if reg.contains(d["rect"])]
+    drs = [d for d in page.get_drawings() if reg.contains(d["rect"])
+           and not pymupdf.Rect(422, 645, 433, 706).contains(d["rect"])]
     page.add_redact_annot(reg, fill=False)
     for l in engine.lines(page):  # page header
         if l["t"] in ("Technical Data", "Lipower Inverters"):
@@ -121,7 +122,7 @@ def feature_page(page, header, feats, title=None):
     W = page.rect.width
     reg = pymupdf.Rect(36, 528, W - 30, 726)
     texts = [l for l in engine.lines(page) if reg.contains(l["bbox"].tl + (0.5, 0.5))]
-    icons = [d["rect"] for d in page.get_drawings() if reg.contains(d["rect"]) and 24 < d["rect"].width < 36 and abs(d["rect"].width - d["rect"].height) < 2]
+    icons = [d["rect"] for d in page.get_drawings() if reg.contains(d["rect"]) and 18 < d["rect"].width < 36 and abs(d["rect"].width - d["rect"].height) < 2]
     for l in texts:
         page.add_redact_annot(l["bbox"], fill=False)
     hd = [l for l in engine.lines(page) if l["t"] in ("Single Phase Hybrid Inverter", "Product Features")]
@@ -132,7 +133,7 @@ def feature_page(page, header, feats, title=None):
     src = pymupdf.open(SRC_DOC)
     for R in icons:
         R = R + (-8, -8, 8, 8)
-        page.show_pdf_page(R, src, 0, clip=pymupdf.Rect(W - 2 - R.width, R.y0, W - 2, R.y1))
+        page.show_pdf_page(R, src, 0, clip=pymupdf.Rect(R.x0, 732, R.x1, 732 + R.height))
     for R in icons:
         R = R + (-8, -8, 8, 8)
         page.show_pdf_page(pymupdf.Rect(W - R.x1, R.y0, W - R.x0, R.y1), src, 0, clip=R)
