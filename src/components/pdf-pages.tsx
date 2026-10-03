@@ -16,7 +16,7 @@ export default function PdfPages({ url }: { url: string }) {
         const pdfjs = await import("pdfjs-dist");
         const worker = (await import("pdfjs-dist/build/pdf.worker.min.mjs?url")).default;
         pdfjs.GlobalWorkerOptions.workerSrc = worker;
-        const doc = await pdfjs.getDocument(url).promise;
+        const doc = await pdfjs.getDocument({ url, disableFontFace: true }).promise;
         const width = el.clientWidth || 360;
         const dpr = Math.min(window.devicePixelRatio || 1, 3);
         for (let i = 1; i <= doc.numPages; i++) {
