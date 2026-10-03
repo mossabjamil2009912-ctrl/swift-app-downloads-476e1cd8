@@ -36,7 +36,10 @@ for (x0, y0, x1, y1) in [(58, 130, 86, 158), (58, 166, 86, 194), (322, 126, 352,
 
 
 def box(rect, text, size, weight=400, align='right'):
-    html = f'<div dir="rtl" style="font-size:{size}pt;font-weight:{weight};text-align:{align}">{text}</div>'
+    import re
+    rtl = bool(re.search('[\u0600-\u06FF]', text))
+    if rtl and align in ('right', 'left'): align = 'left' if align == 'right' else 'right'
+    html = f'<div dir="{'rtl' if rtl else 'ltr'}" style="font-size:{size}pt;font-weight:{weight};text-align:{align}">{text}</div>'
     pg.insert_htmlbox(pymupdf.Rect(rect), html, css=CSS, archive=ARCH)
 
 
@@ -49,8 +52,8 @@ def ltr(t):
 
 def seq(pieces, y0, size, weight=400, right=None, center=None):
     """pieces in visual right-to-left order; each laid out separately so bidi can't reorder them"""
-    f = FONTS[weight]; gap = size * 0.3
-    ws = [f.text_length(t.replace('&lt;', '<').replace('&gt;', '>'), size) * 1.08 + 1 for t in pieces]
+    f = FONTS[weight]; gap = size * 0.25
+    ws = [f.text_length(t.replace('&lt;', '<').replace('&gt;', '>'), size) + 1 for t in pieces]
     tot = sum(ws) + gap * (len(ws) - 1)
     x = right if right is not None else center + tot / 2
     for t, w in zip(pieces, ws):
