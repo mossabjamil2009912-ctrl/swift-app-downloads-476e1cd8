@@ -56,6 +56,7 @@ def rows(tbl, lr, vr, y0, items):
             jobs[1].append((None, Rect(0, cy - 4, 1, cy + 4), {"ar": v, "r": vr, "w": 400, "size": 7, "color": LAB}))
 
 
+jobs[0].append((Rect(52, 698, 160, 754), Rect(0, 0, 1, 1), None))
 add(1, (50, 60, 175, 80), {"ar": "المواصفات", "r": 555, "w": 700, "size": 16, "color": TEAL})
 hdr("المواصفات الكهربائية", LT, 99)
 rows(LT, LLR, LVR, 114.6, [
