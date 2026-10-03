@@ -103,7 +103,7 @@ for pno, items in jobs.items():
         if spec:
             engine.place(page, at, spec, spec.get("size", 7), spec.get("color", GREY))
 
-doc[1].draw_rect(Rect(313,173.2,360,178.5),color=None,fill=(1,1,1));
+doc[1].draw_rect(Rect(313,173.2,360,176.4),color=None,fill=(237/255,242/255,244/255)); doc[1].draw_rect(Rect(313,176.4,360,178.8),color=None,fill=(1,1,1));
 doc.subset_fonts(); doc.save(DST + '.tmp', garbage=4, deflate=True)
 os.replace(DST + '.tmp', DST)
 engine.render(DST, '/tmp/cat/c3n', 110)
