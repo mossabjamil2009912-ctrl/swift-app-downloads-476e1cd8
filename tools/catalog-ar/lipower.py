@@ -100,6 +100,8 @@ def table_page(page):
             s = {"ar": ar, "r": W - r.x0, "w": 700, "size": sz * 1.08}
         elif (r.x0 + r.x1) / 2 < 300 and not t.startswith(("BZ", "2012")):
             s = {"ar": find(t, ITEM) or t, "cx": cx, "w": 600, "size": sz * 1.1}
+            if r.x0 > 250 or t.startswith(("Battery inverter", "Photovoltaic inverter")):
+                s["maxw"] = (r.x1 - r.x0) + 8
         else:
             ar = find(t, VAL) or t.replace("*", " × ").replace("x", " × ") if re.fullmatch(r"\d+[*x]\d+[*x]\d+", t) else (find(t, VAL) or t)
             s = {"ar": ar, "cx": cx, "w": 400, "size": sz * 1.05, "maxw": 225}
