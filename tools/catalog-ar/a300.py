@@ -30,8 +30,9 @@ for y0, y1 in bands:
         page.show_pdf_page(pymupdf.Rect(nx, y0, nx + r.width, y1), s, 1, clip=r, overlay=True)
 # certificates row: long value spills into the label column
 cy0, cy1 = 241.6, 269.4
-page.draw_rect(pymupdf.Rect(L + 0.3, cy0, R - 0.3, cy1), color=None, fill=(1, 1, 1), overlay=True)
-lab = pymupdf.Rect(84, cy0 + 1, 160, cy1 - 1); val = pymupdf.Rect(269, cy0, 540, cy1)
+_px = s[1].get_pixmap(clip=pymupdf.Rect(520, cy0 + 2, 530, cy0 + 4)).pixel(2, 1)
+page.draw_rect(pymupdf.Rect(L + 0.3, cy0, R - 0.3, cy1), color=None, fill=tuple(c / 255 for c in _px[:3]), overlay=True)
+lab = pymupdf.Rect(80, cy0 + 1, 178, cy1 - 1); val = pymupdf.Rect(269, cy0, 540, cy1)
 page.show_pdf_page(pymupdf.Rect(R - 4 - lab.width, cy0, R - 4, cy1), s, 1, clip=lab, overlay=True)
 page.show_pdf_page(pymupdf.Rect(L + 1, cy0, L + 1 + val.width, cy1), s, 1, clip=val, overlay=True)
 d.save(OUT, garbage=4, deflate=True)
