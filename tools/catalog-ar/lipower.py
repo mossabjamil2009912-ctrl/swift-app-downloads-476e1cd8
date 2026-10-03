@@ -131,9 +131,11 @@ def feature_page(page, header, feats, title=None):
     page.apply_redactions(images=pymupdf.PDF_REDACT_IMAGE_NONE, graphics=pymupdf.PDF_REDACT_LINE_ART_NONE,
                           text=pymupdf.PDF_REDACT_TEXT_REMOVE)
     src = pymupdf.open(SRC_DOC)
+    pix = src[0].get_pixmap(dpi=36)
     for R in icons:
         R = R + (-8, -8, 8, 8)
-        page.show_pdf_page(R, src, 0, clip=pymupdf.Rect(R.x0, 732, R.x1, 732 + R.height))
+        px = pix.pixel(int((R.x1 + 4) * 0.5), int(R.y1 * 0.5))
+        page.draw_rect(R, color=None, fill=tuple(c / 255 for c in px[:3]))
     for R in icons:
         R = R + (-8, -8, 8, 8)
         page.show_pdf_page(pymupdf.Rect(W - R.x1, R.y0, W - R.x0, R.y1), src, 0, clip=R)
