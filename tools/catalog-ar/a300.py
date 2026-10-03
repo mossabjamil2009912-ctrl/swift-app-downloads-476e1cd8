@@ -13,7 +13,7 @@ for y0, y1 in segs:
     d = flip(S, OUT, 1, y0, y1, (L, M), (M, R), doc=d, ralign=True, center=True)
 s = pymupdf.open(S); page = d[1]; Z = 4
 for y0, y1 in bands:
-    pm = s[1].get_pixmap(clip=pymupdf.Rect(40, y0, R, y1), matrix=pymupdf.Matrix(Z, Z))
+    pm = s[1].get_pixmap(clip=pymupdf.Rect(L + 0.5, y0, R - 0.5, y1), matrix=pymupdf.Matrix(Z, Z))
     rgb = np.frombuffer(pm.samples, np.uint8).reshape(pm.h, pm.w, pm.n)[:, :, :3]
     lite = rgb.mean(2) > 150
     cols = lite.any(0)
@@ -21,7 +21,8 @@ for y0, y1 in bands:
     page.draw_rect(pymupdf.Rect(40, y0 - 0.3, L - 0.3, y1 + 0.3), color=None, fill=(0.953, 0.953, 0.953), overlay=True)
     page.draw_rect(pymupdf.Rect(L, y0, R, y1), color=None, fill=NAVY, overlay=True)
     for c0, c1 in runs:
-        x0 = 40 + c0 / Z - 0.6; x1 = 40 + c1 / Z + 0.6
+        x0 = L + 0.5 + c0 / Z - 0.6; x1 = L + 0.5 + c1 / Z + 0.6
+        if x0 < L + 3: x0 = 56  # label overflowing the table edge
         r = pymupdf.Rect(max(x0, 41), y0, min(x1, R - 0.5), y1)
         if x0 < M:   # label -> flush right
             nx = R - 4 - r.width
@@ -31,7 +32,7 @@ for y0, y1 in bands:
 # certificates row: long value spills into the label column
 cy0, cy1 = 241.6, 269.4
 page.draw_rect(pymupdf.Rect(L + 0.3, cy0, R - 0.3, cy1), color=None, fill=(1, 1, 1), overlay=True)
-lab = pymupdf.Rect(78, cy0, 165, cy1); val = pymupdf.Rect(269, cy0, 540, cy1)
+lab = pymupdf.Rect(84, cy0 + 1, 160, cy1 - 1); val = pymupdf.Rect(269, cy0, 540, cy1)
 page.show_pdf_page(pymupdf.Rect(R - 4 - lab.width, cy0, R - 4, cy1), s, 1, clip=lab, overlay=True)
 page.show_pdf_page(pymupdf.Rect(L + 1, cy0, L + 1 + val.width, cy1), s, 1, clip=val, overlay=True)
 d.save(OUT, garbage=4, deflate=True)
