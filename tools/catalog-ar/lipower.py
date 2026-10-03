@@ -67,7 +67,10 @@ def mirror(page, drs, W):
                 q = it[1]; sh.draw_quad(pymupdf.Quad(f(q.ur), f(q.ul), f(q.lr), f(q.ll)))
             elif op == "c":
                 sh.draw_bezier(f(it[1]), f(it[2]), f(it[3]), f(it[4]))
-        sh.finish(color=d.get("color"), fill=d.get("fill"), width=d.get("width") or 1,
+        fill = d.get("fill")
+        if fill and sum(fill) < 0.4 and d["rect"].height > 30:
+            fill = (0.92, 0.92, 0.92)
+        sh.finish(color=d.get("color"), fill=fill, width=d.get("width") or 1,
                   closePath=d.get("closePath", False), even_odd=d.get("even_odd", False),
                   fill_opacity=d.get("fill_opacity") or 1, stroke_opacity=d.get("stroke_opacity") or 1)
         sh.commit()
@@ -99,7 +102,7 @@ def table_page(page):
             s = {"ar": find(t, ITEM) or t, "cx": cx, "w": 600, "size": sz * 1.1}
         else:
             ar = find(t, VAL) or t.replace("*", " × ").replace("x", " × ") if re.fullmatch(r"\d+[*x]\d+[*x]\d+", t) else (find(t, VAL) or t)
-            s = {"ar": ar, "cx": cx, "w": 400, "size": sz * 1.05, "maxw": 250}
+            s = {"ar": ar, "cx": cx, "w": 400, "size": sz * 1.05, "maxw": 225}
         if "\u0600" > s["ar"][:1] and s["ar"] == t:
             s["w"] = 400 if s["w"] == 600 else s["w"]
         rr = r
@@ -116,7 +119,7 @@ def feature_page(page, header, feats, title=None):
     W = page.rect.width
     reg = pymupdf.Rect(36, 528, W - 30, 726)
     texts = [l for l in engine.lines(page) if reg.contains(l["bbox"].tl + (0.5, 0.5))]
-    drs = [d for d in page.get_drawings() if reg.contains(d["rect"]) and d["rect"].width < 40]
+    drs = [d for d in page.get_drawings() if reg.contains(d["rect"]) and d["rect"].width < 60]
     for d in drs:
         page.add_redact_annot(d["rect"] + (-0.5, -0.5, 0.5, 0.5), fill=False)
     for l in texts:
